@@ -30,7 +30,7 @@ Public Class MainForm
         Dim x As Integer
 
         Try
-            If String.IsNullOrEmpty(LORVersionString) Then
+            If String.IsNullOrWhiteSpace(LORVersionString) Then
                 LORVersionString = ConfigurationManager.AppSettings("LORVersion")
             End If
 
@@ -95,6 +95,16 @@ Public Class MainForm
         Dim music As New Mp3
         Dim musicprops As MusicProperties = music.GetProperties(songTitle)
 
+        ''If the MP3 cannot be found, set default values
+        'If String.IsNullOrWhiteSpace(musicprops.Title) Then
+        '    musicprops.Title = "Unknown"
+        '    musicprops.Album = "Unknown"
+        '    musicprops.Artist = "Unknown"
+        '    musicprops.Length = TimeSpan.FromSeconds(3)
+        '    musicprops.SequenceType = 0
+        '    musicprops.Year = 1900
+        'End If
+
         'Display data
         StatusLabel.Text = "Song: " & musicprops.Title & vbCrLf & "Album: " & musicprops.Album & vbCrLf & "Artists: " & musicprops.Artist & vbCrLf & "Year: " & musicprops.Year.ToString() & vbCrLf & "Length: " & musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00") & vbCrLf & "Started Playing At: " & timeStarted.ToLongTimeString()
         Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
@@ -114,17 +124,21 @@ Public Class MainForm
         End If
 
         'Push Data
-        Dim context As New orchard_mylightdisplayEntities
-        Dim log As New MusicLog
-        log.Artists = musicprops.Artist
-        log.DateStarted = timeStarted
-        log.Length = musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00")
-        log.Song = musicprops.Title
-        log.Album = musicprops.Album
-        log.Year = musicprops.Year
-        log.SequenceType = musicprops.SequenceType
-        context.AddToMusicLogs(log)
-        context.SaveChanges()
+        Try
+            Dim context As New orchard_mylightdisplayEntities
+            Dim log As New MusicLog
+            log.Artists = musicprops.Artist
+            log.DateStarted = timeStarted
+            log.Length = musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00")
+            log.Song = musicprops.Title
+            log.Album = musicprops.Album
+            log.Year = musicprops.Year
+            log.SequenceType = musicprops.SequenceType
+            context.AddToMusicLogs(log)
+            context.SaveChanges()
+        Catch ex As Exception
+            StatusLabel.Text = "Could not save database changes. (" & ex.Message & ")"
+        End Try
     End Sub
 
     Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
