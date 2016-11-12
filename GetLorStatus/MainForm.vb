@@ -1,9 +1,12 @@
-﻿Public Class MainForm
+﻿Imports System.Configuration
+
+Public Class MainForm
     Private Declare Function FindWindowEx Lib "user32" Alias "FindWindowExA" (ByVal hWnd1 As Integer, ByVal hWnd2 As Integer, ByVal lpsz1 As String, ByVal lpsz2 As String) As Integer
     Private Declare Ansi Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hwnd As Integer, ByVal wMsg As Integer, ByVal wParam As Integer, ByVal lParam As String) As Integer
     Private Const WM_GETTEXT As Short = &HDS
     Private Const WM_GETTEXTLENGTH As Short = &HES
 
+    Private LORVersionString As String = ""
 
     Private Sub TestGetStatus_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         If EventLog.SourceExists("MyLightDisplay") = False Then
@@ -27,8 +30,12 @@
         Dim x As Integer
 
         Try
+            If String.IsNullOrEmpty(LORVersionString) Then
+                LORVersionString = ConfigurationManager.AppSettings("LORVersion")
+            End If
+
             'Get LOR Handle
-            Dim hLor As Integer = FindWindowEx(0, 0, "ThunderRT6FormDC", "Light-O-Rama Status v3.1.4")
+            Dim hLor As Integer = FindWindowEx(0, 0, "ThunderRT6FormDC", LORVersionString)
 
             'Get the Rich Text Box handle
             Dim hTb As Integer = FindWindowEx(hLor, 0, "RichTextWndClass", vbNullString)
@@ -59,7 +66,7 @@
             StatusLabel.Text = "MainForm.ProcessLorStatusLog - History:" & vbCrLf & ex.Message
             Exit Sub
         End Try
-        
+
         Dim songTitle As String = ""
         Dim timeStarted As DateTime
 
