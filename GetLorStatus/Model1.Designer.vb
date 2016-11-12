@@ -9,15 +9,15 @@
 '------------------------------------------------------------------------------
 
 Imports System
+Imports System.ComponentModel
+Imports System.Data.EntityClient
 Imports System.Data.Objects
 Imports System.Data.Objects.DataClasses
-Imports System.Data.EntityClient
-Imports System.ComponentModel
-Imports System.Xml.Serialization
+Imports System.Linq
 Imports System.Runtime.Serialization
+Imports System.Xml.Serialization
 
-<Assembly: EdmSchemaAttribute("b5737b9c-743b-4176-b822-398d9972a61a")>
-
+<Assembly: EdmSchemaAttribute("6aed009f-47f9-4220-8f07-67e95c149b9f")>
 #Region "Contexts"
 
 ''' <summary>
@@ -33,7 +33,7 @@ Public Partial Class orchard_mylightdisplayEntities
     ''' </summary>
     Public Sub New()
         MyBase.New("name=orchard_mylightdisplayEntities", "orchard_mylightdisplayEntities")
-    MyBase.ContextOptions.LazyLoadingEnabled = true
+        MyBase.ContextOptions.LazyLoadingEnabled = true
         OnContextCreated()
     End Sub
 
@@ -42,7 +42,7 @@ Public Partial Class orchard_mylightdisplayEntities
     ''' </summary>
     Public Sub New(ByVal connectionString As String)
         MyBase.New(connectionString, "orchard_mylightdisplayEntities")
-    MyBase.ContextOptions.LazyLoadingEnabled = true
+        MyBase.ContextOptions.LazyLoadingEnabled = true
         OnContextCreated()
     End Sub
 
@@ -51,7 +51,7 @@ Public Partial Class orchard_mylightdisplayEntities
     ''' </summary>
     Public Sub New(ByVal connection As EntityConnection)
         MyBase.New(connection, "orchard_mylightdisplayEntities")
-    MyBase.ContextOptions.LazyLoadingEnabled = true
+        MyBase.ContextOptions.LazyLoadingEnabled = true
         OnContextCreated()
     End Sub
 
@@ -81,6 +81,7 @@ Public Partial Class orchard_mylightdisplayEntities
     Private _MusicLogs As ObjectSet(Of MusicLog)
 
     #End Region
+
     #Region "AddTo Methods"
 
     ''' <summary>
@@ -91,9 +92,11 @@ Public Partial Class orchard_mylightdisplayEntities
     End Sub
 
     #End Region
+
 End Class
 
 #End Region
+
 #Region "Entities"
 
 ''' <summary>
@@ -131,7 +134,8 @@ Public Partial Class MusicLog
     End Function
 
     #End Region
-    #Region "Primitive Properties"
+
+    #Region "Simple Properties"
 
     ''' <summary>
     ''' No Metadata Documentation available.
@@ -146,7 +150,7 @@ Public Partial Class MusicLog
             If (_LogId <> Value) Then
                 OnLogIdChanging(value)
                 ReportPropertyChanging("LogId")
-                _LogId = StructuralObject.SetValidValue(value)
+                _LogId = StructuralObject.SetValidValue(value, "LogId")
                 ReportPropertyChanged("LogId")
                 OnLogIdChanged()
             End If
@@ -172,7 +176,7 @@ Public Partial Class MusicLog
         Set
             OnSongChanging(value)
             ReportPropertyChanging("Song")
-            _Song = StructuralObject.SetValidValue(value, false)
+            _Song = StructuralObject.SetValidValue(value, false, "Song")
             ReportPropertyChanged("Song")
             OnSongChanged()
         End Set
@@ -197,7 +201,7 @@ Public Partial Class MusicLog
         Set
             OnArtistsChanging(value)
             ReportPropertyChanging("Artists")
-            _Artists = StructuralObject.SetValidValue(value, false)
+            _Artists = StructuralObject.SetValidValue(value, false, "Artists")
             ReportPropertyChanged("Artists")
             OnArtistsChanged()
         End Set
@@ -222,7 +226,7 @@ Public Partial Class MusicLog
         Set
             OnYearChanging(value)
             ReportPropertyChanging("Year")
-            _Year = StructuralObject.SetValidValue(value)
+            _Year = StructuralObject.SetValidValue(value, "Year")
             ReportPropertyChanged("Year")
             OnYearChanged()
         End Set
@@ -247,7 +251,7 @@ Public Partial Class MusicLog
         Set
             OnLengthChanging(value)
             ReportPropertyChanging("Length")
-            _Length = StructuralObject.SetValidValue(value, false)
+            _Length = StructuralObject.SetValidValue(value, false, "Length")
             ReportPropertyChanged("Length")
             OnLengthChanged()
         End Set
@@ -272,7 +276,7 @@ Public Partial Class MusicLog
         Set
             OnDateStartedChanging(value)
             ReportPropertyChanging("DateStarted")
-            _DateStarted = StructuralObject.SetValidValue(value)
+            _DateStarted = StructuralObject.SetValidValue(value, "DateStarted")
             ReportPropertyChanged("DateStarted")
             OnDateStartedChanged()
         End Set
@@ -297,7 +301,7 @@ Public Partial Class MusicLog
         Set
             OnAlbumChanging(value)
             ReportPropertyChanging("Album")
-            _Album = StructuralObject.SetValidValue(value, false)
+            _Album = StructuralObject.SetValidValue(value, false, "Album")
             ReportPropertyChanged("Album")
             OnAlbumChanged()
         End Set
@@ -322,7 +326,7 @@ Public Partial Class MusicLog
         Set
             OnSequenceTypeChanging(value)
             ReportPropertyChanging("SequenceType")
-            _SequenceType = StructuralObject.SetValidValue(value)
+            _SequenceType = StructuralObject.SetValidValue(value, "SequenceType")
             ReportPropertyChanged("SequenceType")
             OnSequenceTypeChanged()
         End Set
@@ -336,6 +340,7 @@ Public Partial Class MusicLog
     End Sub
 
     #End Region
+
 End Class
 
 #End Region
