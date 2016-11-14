@@ -9,8 +9,8 @@ Public Class MainForm
     Private LORVersionString As String = ""
 
     Private Sub TestGetStatus_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-        If EventLog.SourceExists("MyLightDisplay") = False Then
-            EventLog.CreateEventSource("MyLightDisplay", "Application")
+        If EventLog.SourceExists(ConfigurationManager.AppSettings("LogName")) = False Then
+            EventLog.CreateEventSource(ConfigurationManager.AppSettings("LogName"), "Application")
         End If
 
         ProcessLorStatusLog()
@@ -45,7 +45,7 @@ Public Class MainForm
             tBuff = Space(tLength)
             Dim tValue As Long = SendMessage(hTb, WM_GETTEXT, tLength, tBuff)
         Catch ex As Exception
-            EventLog.WriteEntry("MyLightDisplay", "MainForm.ProcessLorStatusLog - Win32 Interop:" & vbCrLf & ex.Message, EventLogEntryType.Error)
+            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - Win32 Interop:" & vbCrLf & ex.Message, EventLogEntryType.Error)
             Timer1.Interval = 180000
             StatusLabel.Text = "MainForm.ProcessLorStatusLog - Win32 Interop:" & vbCrLf & ex.Message
             Exit Sub
@@ -61,7 +61,7 @@ Public Class MainForm
                 x = 0
             End If
         Catch ex As Exception
-            EventLog.WriteEntry("MyLightDisplay", "MainForm.ProcessLorStatusLog - History:" & vbCrLf & ex.Message, EventLogEntryType.Error)
+            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - History:" & vbCrLf & ex.Message, EventLogEntryType.Error)
             Timer1.Interval = 180000
             StatusLabel.Text = "MainForm.ProcessLorStatusLog - History:" & vbCrLf & ex.Message
             Exit Sub
@@ -85,7 +85,7 @@ Public Class MainForm
 
         'If there is no song, an error occurred
         If songTitle = "" Then
-            EventLog.WriteEntry("MyLightDisplay", "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Error)
+            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Error)
             Timer1.Interval = 180000
             StatusLabel.Text = "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines"
             Exit Sub
@@ -109,7 +109,7 @@ Public Class MainForm
         StatusLabel.Text = "Song: " & musicprops.Title & vbCrLf & "Album: " & musicprops.Album & vbCrLf & "Artists: " & musicprops.Artist & vbCrLf & "Year: " & musicprops.Year.ToString() & vbCrLf & "Length: " & musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00") & vbCrLf & "Started Playing At: " & timeStarted.ToLongTimeString()
         Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
         If interval < 200 Then
-            EventLog.WriteEntry("MyLightDisplay", "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
+            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
             interval = 2000
         End If
         Timer1.Interval = interval
