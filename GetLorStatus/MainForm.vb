@@ -77,7 +77,7 @@ Public Class MainForm
                 Dim lineDetails As String() = historyLines(y).Split(": ")
                 timeStarted = DateTime.Parse(lineDetails(0) & ":" & lineDetails(1) & ":" & lineDetails(2))
                 Dim sequenceParts As String() = lineDetails(5).Trim.Split("\")
-                songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".lms", "").Trim
+                songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".lms.lcs", "").Replace(".lms", "").Trim
                 Exit While
             End If
             y = y - 1

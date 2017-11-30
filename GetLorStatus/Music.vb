@@ -35,7 +35,7 @@ Public Class Mp3
                 props.Length = New TimeSpan(file.Properties.Duration.Ticks)
             End Using
         Catch ex As Exception
-            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "Mp3.GetProperties Exception:" & vbCrLf & ex.Message)
+            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "Mp3.GetProperties Exception (Song: " + Song + "):" & vbCrLf & ex.Message)
         End Try
 
         Return props
