@@ -84,6 +84,14 @@ Public Class MainForm
                 timeStarted = DateTime.Parse(lineDetails(0) & ":" & lineDetails(1) & ":" & lineDetails(2))
                 Dim sequenceParts As String() = lineDetails(5).Trim.Split("\")
                 songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".lms.lcs", "").Replace(".lms", "").Replace(".play", "").Trim
+
+                Dim songTitleParts As String() = songTitle.Split(".")
+
+                'Updated to correct .loredit files
+                If songTitleParts.Length = 3 Then
+                    songTitle = songTitleParts(0)
+                End If
+
                 Exit While
             End If
             y = y - 1
