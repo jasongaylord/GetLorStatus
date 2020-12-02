@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="mylightdisplayModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="MusicLogEntries">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Song" Type="nvarchar" MaxLength="255" />
+          <Property Name="Artists" Type="nvarchar" MaxLength="255" />
+          <Property Name="Album" Type="nvarchar" MaxLength="255" />
+          <Property Name="Year" Type="int" Nullable="false" />
+          <Property Name="Length" Type="nvarchar" MaxLength="30" />
+          <Property Name="DateStarted" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="SequenceType" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="mylightdisplayModelStoreContainer">
+          <EntitySet Name="MusicLogEntries" EntityType="Self.MusicLogEntries" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="mylightdisplayModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="MusicLogEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Song" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Artists" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Album" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="Length" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="DateStarted" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="SequenceType" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="mylightdisplayEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MusicLogEntries" EntityType="Self.MusicLogEntry" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="mylightdisplayModelStoreContainer" CdmEntityContainer="mylightdisplayEntities">
+          <EntitySetMapping Name="MusicLogEntries">
+            <EntityTypeMapping TypeName="mylightdisplayModel.MusicLogEntry">
+              <MappingFragment StoreEntitySet="MusicLogEntries">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Song" ColumnName="Song" />
+                <ScalarProperty Name="Artists" ColumnName="Artists" />
+                <ScalarProperty Name="Album" ColumnName="Album" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="DateStarted" ColumnName="DateStarted" />
+                <ScalarProperty Name="SequenceType" ColumnName="SequenceType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

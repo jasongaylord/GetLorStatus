@@ -37,13 +37,19 @@ Public Class MainForm
             'Get LOR Handle
             Dim hLor As Integer = FindWindowEx(0, 0, "ThunderRT6FormDC", LORVersionString)
 
+            'Get the Picture Box Control
+            Dim hPic As Integer = FindWindowEx(hLor, 0, "ThunderRT6PictureBoxDC", vbNullString)
+
+            'Get Tab
+            Dim hTab As Integer = FindWindowEx(hPic, 0, "ThunderRT6UserControl", vbNullString)
+
             'Get the Rich Text Box handle
-            Dim hTb As Integer = FindWindowEx(hLor, 0, "RichTextWndClass", vbNullString)
+            Dim hEditor As Integer = FindWindowEx(hTab, 0, "RICHEDIT50W", vbNullString)
 
             'Get the contents of the Rich Text
-            Dim tLength As Long = SendMessage(hTb, WM_GETTEXTLENGTH, CInt(0), CInt(0)) + 1
+            Dim tLength As Long = SendMessage(hEditor, WM_GETTEXTLENGTH, CInt(0), CInt(0)) + 1
             tBuff = Space(tLength)
-            Dim tValue As Long = SendMessage(hTb, WM_GETTEXT, tLength, tBuff)
+            Dim tValue As Long = SendMessage(hEditor, WM_GETTEXT, tLength, tBuff)
         Catch ex As Exception
             EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - Win32 Interop:" & vbCrLf & ex.Message, EventLogEntryType.Error)
             Timer1.Interval = 180000
@@ -77,7 +83,7 @@ Public Class MainForm
                 Dim lineDetails As String() = historyLines(y).Split(": ")
                 timeStarted = DateTime.Parse(lineDetails(0) & ":" & lineDetails(1) & ":" & lineDetails(2))
                 Dim sequenceParts As String() = lineDetails(5).Trim.Split("\")
-                songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".lms.lcs", "").Replace(".lms", "").Trim
+                songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".lms.lcs", "").Replace(".lms", "").Replace(".play", "").Trim
                 Exit While
             End If
             y = y - 1
@@ -125,8 +131,8 @@ Public Class MainForm
 
         'Push Data
         Try
-            Dim context As New orchard_mylightdisplayEntities
-            Dim log As New MusicLog
+            Dim context As New mylightdisplayEntities
+            Dim log As New MusicLogEntry
             log.Artists = musicprops.Artist
             log.DateStarted = timeStarted
             log.Length = musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00")
@@ -134,8 +140,11 @@ Public Class MainForm
             log.Album = musicprops.Album
             log.Year = musicprops.Year
             log.SequenceType = musicprops.SequenceType
-            context.AddToMusicLogs(log)
-            context.SaveChanges()
+
+            If (log.Song.Length > 0) Then
+                context.MusicLogEntries.Add(log)
+                context.SaveChanges()
+            End If
         Catch ex As Exception
             StatusLabel.Text = "Could not save database changes. (" & ex.Message & ")"
         End Try
