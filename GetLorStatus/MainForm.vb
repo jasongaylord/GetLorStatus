@@ -131,7 +131,7 @@ Public Class MainForm
         Timer1.Interval = interval
         StatusLabel.Text &= vbCrLf & "Interval in Milliseconds: " & interval & vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
 
-        File.WriteAllText(ConfigurationManager.AppSettings("MusicFolder") + LORStatusFile, "Song|" & musicprops.Title & vbCrLf & "NextPoll|" & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString() & "SequenceType|" & musicprops.SequenceType)
+        File.WriteAllText(ConfigurationManager.AppSettings("MusicFolder") + LORStatusFile, "Song|" & musicprops.Title & vbCrLf & "NextPoll|" & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString() & vbCrLf & "SequenceType|" & musicprops.SequenceType & vbCrLf & "Interval|" & interval)
 
         If musicprops.Artist = Nothing Then
             musicprops.Artist = ""
