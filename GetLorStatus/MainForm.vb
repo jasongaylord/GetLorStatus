@@ -1,4 +1,5 @@
 ﻿Imports System.Configuration
+Imports System.IO
 
 Public Class MainForm
     Private Declare Function FindWindowEx Lib "user32" Alias "FindWindowExA" (ByVal hWnd1 As Integer, ByVal hWnd2 As Integer, ByVal lpsz1 As String, ByVal lpsz2 As String) As Integer
@@ -7,6 +8,7 @@ Public Class MainForm
     Private Const WM_GETTEXTLENGTH As Short = &HES
 
     Private LORVersionString As String = ""
+    Private LORStatusFile As String = "status.txt"
 
     Private Sub TestGetStatus_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         If EventLog.SourceExists(ConfigurationManager.AppSettings("LogName")) = False Then
@@ -128,6 +130,8 @@ Public Class MainForm
         End If
         Timer1.Interval = interval
         StatusLabel.Text &= vbCrLf & "Interval in Milliseconds: " & interval & vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
+
+        File.WriteAllText(ConfigurationManager.AppSettings("MusicFolder") + LORStatusFile, "Song|" & musicprops.Title & vbCrLf & "NextPoll|" & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString())
 
         If musicprops.Artist = Nothing Then
             musicprops.Artist = ""
