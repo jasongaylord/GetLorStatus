@@ -5,8 +5,8 @@ Public Class Mp3
     Public Function GetProperties(Song As String) As MusicProperties
         Dim props As New MusicProperties
 
-        Try
-            props.Length = New TimeSpan(0)
+        'Try
+        props.Length = New TimeSpan(0)
 
             If Song.Contains(" - Animated") Then
                 props.SequenceType = 2
@@ -34,11 +34,11 @@ Public Class Mp3
                 props.Year = file.Tag.Year
                 props.Length = New TimeSpan(file.Properties.Duration.Ticks)
             End Using
-        Catch ex As Exception
-            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "Mp3.GetProperties Exception (Song: " + Song + "):" & vbCrLf & ex.Message)
-        End Try
+            'Catch ex As Exception
+            '    EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "Mp3.GetProperties Exception (Song: " + Song + "):" & vbCrLf & ex.Message)
+            'End Try
 
-        Return props
+            Return props
     End Function
 End Class
 
