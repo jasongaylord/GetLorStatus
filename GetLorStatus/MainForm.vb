@@ -85,7 +85,15 @@ Public Class MainForm
                 Dim lineDetails As String() = historyLines(y).Split(": ")
                 timeStarted = DateTime.Parse(lineDetails(0) & ":" & lineDetails(1) & ":" & lineDetails(2))
                 Dim sequenceParts As String() = lineDetails(5).Trim.Split("\")
-                songTitle = sequenceParts(sequenceParts.Length - 2).Replace(".lms.lcs", "").Replace(".lms", "").Replace(".play", "").Trim
+
+                Dim replacementValueString As String = ConfigurationManager.AppSettings("ReplacementValues")
+                Dim replacementValues As String() = replacementValueString.Split("|")
+
+                songTitle = sequenceParts(sequenceParts.Length - 1)
+                For Each replaceValue In replacementValues
+                    songTitle = songTitle.Replace(replaceValue, "")
+                Next
+                'songTitle = sequenceParts(sequenceParts.Length - 1).Replace(".0001", "").Replace(".43", "").Replace(".lms.lcs", "").Replace(".lms", "").Replace(".play", "").Trim
 
                 Dim songTitleParts As String() = songTitle.Split(".")
 
@@ -158,12 +166,13 @@ Public Class MainForm
                 context.SaveChanges()
             End If
         Catch ex As Exception
-            StatusLabel.Text = "Could not save database changes. (" & ex.Message & ")"
+            StatusLabel.Text = "Could not save database changes for '" & songTitle & "'. (" & ex.Message & ")"
         End Try
     End Sub
 
     Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
         Timer1.Stop()
+        Timer1.Interval = 2000
         Timer1.Start()
     End Sub
 End Class
