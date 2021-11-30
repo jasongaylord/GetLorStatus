@@ -140,9 +140,12 @@ Public Class MainForm
         'Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
         Dim interval As Integer
         If interval < 200 Then
-            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
-            interval = 1000
+            If (oldLastKnownSong <> LastKnownSong) Then
+                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
+                interval = 1000
+            End If
         End If
+
         'Timer1.Interval = interval
         StatusLabel.Text &= vbCrLf & "Interval in Milliseconds: " & interval & vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
 
