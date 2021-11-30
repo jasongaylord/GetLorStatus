@@ -10,6 +10,8 @@ Public Class MainForm
     Private LORVersionString As String = ""
     Private LORStatusFile As String = "status.txt"
 
+    Dim LastKnownSong As String = ""
+
     Private Sub TestGetStatus_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         If EventLog.SourceExists(ConfigurationManager.AppSettings("LogName")) = False Then
             EventLog.CreateEventSource(ConfigurationManager.AppSettings("LogName"), "Application")
@@ -115,6 +117,10 @@ Public Class MainForm
             Exit Sub
         End If
 
+        'Save Last Known Song Title
+        Dim oldLastKnownSong = LastKnownSong
+        LastKnownSong = songTitle
+
         'Grab MP3 properties
         Dim music As New Mp3
         Dim musicprops As MusicProperties = music.GetProperties(songTitle)
@@ -131,12 +137,13 @@ Public Class MainForm
 
         'Display data
         StatusLabel.Text = "Song: " & musicprops.Title & vbCrLf & "Album: " & musicprops.Album & vbCrLf & "Artists: " & musicprops.Artist & vbCrLf & "Year: " & musicprops.Year.ToString() & vbCrLf & "Length: " & musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00") & vbCrLf & "Started Playing At: " & timeStarted.ToLongTimeString()
-        Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
+        'Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
+        Dim interval As Integer
         If interval < 200 Then
             EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
-            interval = 2000
+            interval = 1000
         End If
-        Timer1.Interval = interval
+        'Timer1.Interval = interval
         StatusLabel.Text &= vbCrLf & "Interval in Milliseconds: " & interval & vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
 
         File.WriteAllText(ConfigurationManager.AppSettings("MusicFolder") + LORStatusFile, "Song|" & musicprops.Title & vbCrLf & "NextPoll|" & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString() & vbCrLf & "SequenceType|" & musicprops.SequenceType & vbCrLf & "Interval|" & interval)
@@ -150,29 +157,32 @@ Public Class MainForm
         End If
 
         'Push Data
-        Try
-            Dim context As New mylightdisplayEntities
-            Dim log As New MusicLogEntry
-            log.Artists = musicprops.Artist
-            log.DateStarted = timeStarted
-            log.Length = musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00")
-            log.Song = musicprops.Title
-            log.Album = musicprops.Album
-            log.Year = musicprops.Year
-            log.SequenceType = musicprops.SequenceType
+        If (oldLastKnownSong <> LastKnownSong) Then
+            Try
+                Dim context As New mylightdisplayEntities
+                Dim log As New MusicLogEntry
+                log.Artists = musicprops.Artist
+                log.DateStarted = timeStarted
+                log.Length = musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00")
+                log.Song = musicprops.Title
+                log.Album = musicprops.Album
+                log.Year = musicprops.Year
+                log.SequenceType = musicprops.SequenceType
 
-            If (log.Song.Length > 0) Then
-                context.MusicLogEntries.Add(log)
-                context.SaveChanges()
-            End If
-        Catch ex As Exception
-            StatusLabel.Text = "Could not save database changes for '" & songTitle & "'. (" & ex.Message & ")"
-        End Try
+                If (log.Song.Length > 0) Then
+                    context.MusicLogEntries.Add(log)
+                    context.SaveChanges()
+                End If
+            Catch ex As Exception
+                StatusLabel.Text = "Could not save database changes for '" & songTitle & "'. (" & ex.Message & ")"
+            End Try
+        End If
     End Sub
 
     Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
         Timer1.Stop()
-        Timer1.Interval = 2000
+        Timer1.Interval = 1000
+        StatusLabel.Text = "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
         Timer1.Start()
     End Sub
 End Class
