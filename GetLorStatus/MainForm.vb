@@ -112,7 +112,7 @@ Public Class MainForm
         'If there is no song, an error occurred
         If songTitle = "" Then
             If LastKnownSong <> "" Then
-                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Error)
+                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Warning)
                 LastKnownSong = songTitle
             End If
             Timer1.Interval = 1000
@@ -140,17 +140,18 @@ Public Class MainForm
 
         'Display data
         StatusLabel.Text = "Song: " & musicprops.Title & vbCrLf & "Album: " & musicprops.Album & vbCrLf & "Artists: " & musicprops.Artist & vbCrLf & "Year: " & musicprops.Year.ToString() & vbCrLf & "Length: " & musicprops.Length.Minutes.ToString() & ":" & musicprops.Length.Seconds.ToString("00") & vbCrLf & "Started Playing At: " & timeStarted.ToLongTimeString()
-        'Dim interval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
-        Dim interval As Integer
-        If interval < 200 Then
-            If (oldLastKnownSong <> LastKnownSong) Then
-                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
-                interval = 1000
-            End If
-        End If
+        Dim songInterval As Integer = CInt(musicprops.Length.TotalMilliseconds - DateTime.Now.Subtract(timeStarted).TotalMilliseconds) + 2000
+        Dim interval As Integer = 1000
+        'If interval < 200 Then
+        '    If (oldLastKnownSong <> LastKnownSong) Then
+        '        EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "The song, " & musicprops.Title & ", has an interval of " & interval & " when playing at " & timeStarted & " and currently at " & DateTime.Now.ToLongTimeString())
+        '        interval = 1000
+        '    End If
+        'End If
 
         'Timer1.Interval = interval
-        StatusLabel.Text &= vbCrLf & "Interval in Milliseconds: " & interval & vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
+        '"Interval in Milliseconds: " & songInterval & vbCrLf
+        StatusLabel.Text &= vbCrLf & "Next Polling Time Is: " & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString()
 
         File.WriteAllText(ConfigurationManager.AppSettings("MusicFolder") + LORStatusFile, "Song|" & musicprops.Title & vbCrLf & "NextPoll|" & DateTime.Now.AddMilliseconds(Timer1.Interval).ToLongTimeString() & vbCrLf & "SequenceType|" & musicprops.SequenceType & vbCrLf & "Interval|" & interval)
 
