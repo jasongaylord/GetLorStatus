@@ -111,14 +111,16 @@ Public Class MainForm
 
         'If there is no song, an error occurred
         If songTitle = "" Then
-            EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Error)
-            Timer1.Interval = 180000
-            StatusLabel.Text = "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines"
-            Exit Sub
-        End If
+            If () Then
 
-        'Save Last Known Song Title
-        Dim oldLastKnownSong = LastKnownSong
+                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines", EventLogEntryType.Error)
+                Timer1.Interval = 1000
+                StatusLabel.Text = "MainForm.ProcessLorStatusLog - No Song In Last 10 Lines"
+                Exit Sub
+            End If
+
+            'Save Last Known Song Title
+            Dim oldLastKnownSong = LastKnownSong
         LastKnownSong = songTitle
 
         'Grab MP3 properties
@@ -177,6 +179,7 @@ Public Class MainForm
                     context.SaveChanges()
                 End If
             Catch ex As Exception
+                EventLog.WriteEntry(ConfigurationManager.AppSettings("LogName"), "Could Not save database changes for '" & songTitle & "'. (" & ex.Message & ")", EventLogEntryType.Error)
                 StatusLabel.Text = "Could not save database changes for '" & songTitle & "'. (" & ex.Message & ")"
             End Try
         End If
